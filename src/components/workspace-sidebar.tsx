@@ -7,10 +7,13 @@ import {
   MessagesSquare,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
+import { useAssistants } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 import { LoginStatus } from "./login-status";
+import { RecentThreads } from "./recent-threads";
 import { Tooltip } from "./tooltip";
 import {
   Sidebar,
@@ -27,10 +30,12 @@ import {
   useSidebar,
 } from "./ui/sidebar";
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function WorkspaceSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
+    <Sidebar variant="sidebar" collapsible="icon" {...props}>
+      <SidebarHeader className="py-0">
         <HeaderBar />
       </SidebarHeader>
       <SidebarContent>
@@ -46,28 +51,47 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 }
 
 function NavMain() {
+  const pathname = usePathname();
+  const { data: assistants } = useAssistants();
   return (
     <SidebarGroup>
       <SidebarMenu>
+        {assistants?.[0] && (
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={pathname === "/workspace/threads/new"}
+              asChild
+            >
+              <Link
+                className="text-muted-foreground"
+                href={`/workspace/threads/new?assistantId=${assistants[0].graph_id}`}
+              >
+                <MessageSquarePlus />
+                <span>New Thread</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        )}
         <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <Link className="text-muted-foreground" href="/threads">
-              <MessageSquarePlus />
-              <span>New Thread</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <Link className="text-muted-foreground" href="/threads">
+          <SidebarMenuButton
+            isActive={pathname === "/workspace/threads"}
+            asChild
+          >
+            <Link className="text-muted-foreground" href="/workspace/threads">
               <MessagesSquare />
               <span>Threads</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <Link className="text-muted-foreground" href="/assistants">
+          <SidebarMenuButton
+            isActive={pathname === "/workspace/assistants"}
+            asChild
+          >
+            <Link
+              className="text-muted-foreground"
+              href="/workspace/assistants"
+            >
               <BotMessageSquare />
               <span>Assistants</span>
             </Link>
@@ -82,30 +106,28 @@ function NavRecents() {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Recents</SidebarGroupLabel>
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <Link className="text-muted-foreground" href="/threads/1234">
-              Thread about project X
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      </SidebarMenu>
+      <RecentThreads />
     </SidebarGroup>
   );
 }
 
 function HeaderBar() {
-  const { open } = useSidebar();
+  const { open, toggleSidebar } = useSidebar();
   return open ? (
-    <div className="flex h-8 w-full items-center justify-between gap-2 group-data-[collapsible=icon]:justify-center">
-      <Logo className="ml-[7px]" />
+    <div
+      key="container"
+      className="flex h-16 w-full items-center justify-between gap-2 transition-[width,height] duration-300 ease-out group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 group-data-[collapsible=icon]:justify-center"
+    >
+      <Logo className="ml-[7px] cursor-pointer" onClick={toggleSidebar} />
       <Tooltip content="Collapse sidebar">
         <SidebarTrigger className="text-l opacity-30 hover:opacity-100" />
       </Tooltip>
     </div>
   ) : (
-    <div className="group/collapse-button flex size-8 items-center justify-center">
+    <div
+      key="container"
+      className="group/collapse-button flex size-8 items-center justify-center pb-4 group-has-data-[collapsible=icon]/sidebar-wrapper:pt-6"
+    >
       <Logo className="group-hover/collapse-button:hidden" />
       <SidebarTrigger className="text-l hidden w-4 opacity-30 group-hover/collapse-button:block hover:opacity-100" />
     </div>

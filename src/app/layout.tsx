@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import "@/styles/globals.css";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "LangLens",
@@ -21,7 +22,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geist.variable}`}
+      className={cn(geist.variable, "overscroll-none")}
       suppressContentEditableWarning
       suppressHydrationWarning
     >
