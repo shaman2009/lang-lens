@@ -1,3 +1,7 @@
-export default function WorkspacePage() {
-  return <div></div>;
+"use client";
+
+import { redirect } from "next/navigation";
+
+export default function HomePage() {
+  redirect("/workspace/threads/new");
 }

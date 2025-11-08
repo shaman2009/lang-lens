@@ -64,7 +64,7 @@ function NavMain() {
             >
               <Link
                 className="text-muted-foreground"
-                href={`/workspace/threads/new?assistantId=${assistants[0].graph_id}`}
+                href="/workspace/threads/new"
               >
                 <MessageSquarePlus />
                 <span>New Thread</span>

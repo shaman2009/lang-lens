@@ -26,7 +26,7 @@ export default function RootLayout({
       suppressContentEditableWarning
       suppressHydrationWarning
     >
-      <body>
+      <body className="overflow-hidden">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

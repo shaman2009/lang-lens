@@ -14,7 +14,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "./ui/breadcrumb";
-import { ProgressiveBlur } from "./ui/progressive-blur";
 
 export function WorkspaceContainer({
   className,
@@ -22,13 +21,8 @@ export function WorkspaceContainer({
   ...props
 }: React.ComponentProps<"div">) {
   return (
-    <div
-      className={cn("flex h-screen w-full flex-col overflow-y-auto", className)}
-      {...props}
-    >
+    <div className={cn("flex h-screen w-full flex-col", className)} {...props}>
       {children}
-      <ProgressiveBlur position="top" height="64px" />
-      <ProgressiveBlur position="bottom" height="8%" />
     </div>
   );
 }
@@ -104,16 +98,34 @@ export function WorkspaceContent({
   return (
     <main
       className={cn(
-        "relative flex size-full flex-1 flex-col items-center px-4 pt-2",
+        "relative flex min-h-0 w-full flex-1 flex-col items-center pt-2",
         className,
       )}
       {...props}
     >
-      <div className="container flex h-full flex-col items-center">
+      <div className="flex h-full w-full flex-col items-center">
         {children}
         <div className="flex h-12 shrink-0">&nbsp;</div>
       </div>
     </main>
+  );
+}
+
+export function WorkspaceFooter({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"footer">) {
+  return (
+    <footer
+      className={cn(
+        "absolute right-0 bottom-8 left-0 z-20 flex justify-center",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </footer>
   );
 }
 
