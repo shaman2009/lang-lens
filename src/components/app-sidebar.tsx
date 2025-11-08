@@ -20,6 +20,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
   SidebarTrigger,
   useSidebar,
 } from "./ui/sidebar";
@@ -37,6 +38,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter>
         <LoginStatus />
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }
@@ -110,7 +112,10 @@ function HeaderBar() {
 
 function Logo({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn("flex items-center gap-2", className)} {...props}>
+    <div
+      className={cn("text-primary flex items-center gap-2", className)}
+      {...props}
+    >
       <HatGlasses size={18} />
       <span className="text-l group-data-[collapsible=icon]:hidden">
         LangLens
