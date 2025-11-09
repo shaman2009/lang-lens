@@ -82,7 +82,7 @@ export default function ThreadPage() {
           },
         );
         router.replace(
-          `/workspace/threads/${threadId}?assistantId=${assistantId}`,
+          `/workspace/threads/${threadId}?assistantId=${assistantId}&autoFocus=true`,
         );
       }
       await submit(
@@ -120,7 +120,8 @@ export default function ThreadPage() {
         <InputBox
           className={cn(isNew && "-translate-y-[40vh]")}
           assistantId={assistantId}
-          isNewThread={isNew}
+          isNew={isNew}
+          autoFocus={isNew || searchParams.get("autoFocus") === "true"}
           onSubmit={handleSubmit}
         />
       </WorkspaceFooter>

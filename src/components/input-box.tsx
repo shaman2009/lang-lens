@@ -18,12 +18,13 @@ import { EmptyState } from "./empty-state";
 export function InputBox({
   className,
   assistantId,
-  isNewThread,
+  isNew,
+  autoFocus,
   onSubmit,
   ...props
 }: Omit<ComponentProps<typeof PromptInput>, "onSubmit"> & {
   assistantId?: string | null;
-  isNewThread?: boolean;
+  isNew?: boolean;
   onSubmit?: (message: PromptInputMessage) => void;
 }) {
   const handleSubmit = useCallback(
@@ -39,7 +40,7 @@ export function InputBox({
     <PromptInput
       className={cn(
         "rounded-3xl drop-shadow-2xl backdrop-blur-xs transition-all duration-300 ease-out *:data-[slot='input-group']:rounded-3xl",
-        isNewThread
+        isNew
           ? "max-w-(--container-width-sm)"
           : "focus-within:bg-background/85 h-12 max-w-(--container-width-xs) overflow-hidden focus-within:h-fit focus-within:max-w-(--container-width-md)",
         className,
@@ -49,7 +50,7 @@ export function InputBox({
       onSubmit={handleSubmit}
       {...props}
     >
-      {isNewThread && (
+      {isNew && (
         <EmptyState
           className="absolute -top-36"
           description="Messages will appear here as the conversation progresses."
@@ -64,8 +65,9 @@ export function InputBox({
           </PromptInputAttachments>
         </div>
         <PromptInputTextarea
-          className={cn("pl-4", isNewThread ? "min-h-24!" : "min-h-1!")}
+          className={cn("pl-4", isNew ? "min-h-24!" : "min-h-1!")}
           placeholder="How can I assist you today?"
+          autoFocus={autoFocus}
         />
       </PromptInputBody>
       <PromptInputFooter className="flex">
