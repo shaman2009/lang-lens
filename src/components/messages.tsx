@@ -30,6 +30,7 @@ export function Messages({
             shouldRender(message) && (
               <MessageItem
                 key={message.id}
+                className={cn(message.type === "human" && "mb-8")}
                 message={message}
                 messages={messages}
               />
@@ -57,15 +58,24 @@ export function hasToolCalls(message: Message): message is AIMessage {
 }
 
 export function MessageItem({
+  className,
   message,
   messages,
 }: {
+  className?: string;
   message: Message;
   messages: Message[];
 }) {
   return (
-    <ConversationMessage from={message.type === "human" ? "user" : "assistant"}>
-      <ConversationMessageContent className="relative">
+    <ConversationMessage
+      className={cn(
+        message.type === "ai" &&
+          "hover:bg-card/40 rounded-lg px-4 py-2 transition-colors ease-out",
+        className,
+      )}
+      from={message.type === "human" ? "user" : "assistant"}
+    >
+      <ConversationMessageContent className="flex flex-col">
         {typeof message.content === "string" ? (
           <MessageContent>{message.content}</MessageContent>
         ) : (
@@ -74,7 +84,7 @@ export function MessageItem({
           ))
         )}
         {hasToolCalls(message) && message.tool_calls && (
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-4 pb-2">
             {message.tool_calls.map((tool_call) => (
               <ToolCallView
                 key={tool_call.id}
