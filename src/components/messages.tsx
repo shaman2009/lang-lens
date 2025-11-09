@@ -1,5 +1,5 @@
 import type { MessageContentComplex } from "@langchain/core/messages";
-import type { Message } from "@langchain/langgraph-sdk";
+import type { AIMessage, Message } from "@langchain/langgraph-sdk";
 
 import { rehypeSplitWordsIntoSpans } from "@/lib/rehype";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ import {
   MessageContent as ConversationMessageContent,
   MessageResponse as ConversationMessageResponse,
 } from "./ai-elements/message";
+import { ToolCallView } from "./tool-call-view";
 
 export function Messages({
   className,
@@ -23,15 +24,43 @@ export function Messages({
       className={cn("flex h-full w-full justify-center", className)}
     >
       <ConversationContent className="w-full max-w-(--container-width-md) place-self-center pt-20 pb-40">
-        {messages.map((message) => (
-          <MessageItem key={message.id} message={message} />
-        ))}
+        {messages.map(
+          (message) =>
+            shouldRender(message) && (
+              <MessageItem
+                key={message.id}
+                message={message}
+                messages={messages}
+              />
+            ),
+        )}
       </ConversationContent>
     </Conversation>
   );
 }
 
-export function MessageItem({ message }: { message: Message }) {
+export function shouldRender(message: Message) {
+  if (message.type === "tool") {
+    return false;
+  }
+  return true;
+}
+
+export function hasToolCalls(message: Message): message is AIMessage {
+  return (
+    message.type === "ai" &&
+    !!message.tool_calls &&
+    message.tool_calls.length > 0
+  );
+}
+
+export function MessageItem({
+  message,
+  messages,
+}: {
+  message: Message;
+  messages: Message[];
+}) {
   return (
     <ConversationMessage from={message.type === "human" ? "user" : "assistant"}>
       <ConversationMessageContent>
@@ -41,6 +70,17 @@ export function MessageItem({ message }: { message: Message }) {
           message.content.map((content, index) => (
             <MessageContent key={index}>{content}</MessageContent>
           ))
+        )}
+        {hasToolCalls(message) && message.tool_calls && (
+          <div className="flex flex-col gap-2">
+            {message.tool_calls.map((tool_call) => (
+              <ToolCallView
+                key={tool_call.id}
+                toolCall={tool_call}
+                messages={messages}
+              />
+            ))}
+          </div>
         )}
       </ConversationMessageContent>
     </ConversationMessage>
