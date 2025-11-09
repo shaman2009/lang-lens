@@ -95,6 +95,7 @@ export function WorkspaceHeader({
             href="https://github.com/magiccube/lang-lens"
             target="_blank"
             rel="noopener noreferrer"
+            className="opacity-75 transition hover:opacity-100"
           >
             <GithubIcon className="size-6" />
           </a>
