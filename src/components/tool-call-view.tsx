@@ -32,7 +32,7 @@ export function ToolCallView({
     return "input-available";
   }, [toolMessage]);
   return (
-    <Tool className="mb-0">
+    <Tool className="mb-0 rounded-lg">
       <ToolHeader
         state={state}
         title={toolCall.name}
