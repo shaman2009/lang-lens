@@ -4,7 +4,11 @@ import type { AIMessage, Message } from "@langchain/langgraph-sdk";
 import { rehypeSplitWordsIntoSpans } from "@/lib/rehype";
 import { cn } from "@/lib/utils";
 
-import { Conversation, ConversationContent } from "./ai-elements/conversation";
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from "./ai-elements/conversation";
 import {
   Message as ConversationMessage,
   MessageContent as ConversationMessageContent,
@@ -38,6 +42,7 @@ export function Messages({
         )}
         <InnerShadow />
       </ConversationContent>
+      <ConversationScrollButton className="-translate-y-16 backdrop-blur-xs" />
     </Conversation>
   );
 }
