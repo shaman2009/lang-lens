@@ -1,11 +1,14 @@
 "use client";
 
+import { Github } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 
 import { cn } from "@/lib/utils";
 
+import { GithubIcon } from "./github-icon";
+import { Tooltip } from "./tooltip";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -42,7 +45,7 @@ export function WorkspaceHeader({
   return (
     <header
       className={cn(
-        "top-0 right-0 left-0 z-20 flex h-16 shrink-0 items-center gap-2 border-b backdrop-blur-sm transition-[width,height] ease-out group-has-data-[collapsible=icon]/sidebar-wrapper:h-12",
+        "top-0 right-0 left-0 z-20 flex h-16 shrink-0 items-center justify-between gap-2 border-b backdrop-blur-sm transition-[width,height] ease-out group-has-data-[collapsible=icon]/sidebar-wrapper:h-12",
         className,
       )}
       {...props}
@@ -85,6 +88,17 @@ export function WorkspaceHeader({
             )}
           </BreadcrumbList>
         </Breadcrumb>
+      </div>
+      <div className="pr-4">
+        <Tooltip content="LangLens on Github">
+          <a
+            href="https://github.com/magiccube/lang-lens"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <GithubIcon className="size-6" />
+          </a>
+        </Tooltip>
       </div>
     </header>
   );
