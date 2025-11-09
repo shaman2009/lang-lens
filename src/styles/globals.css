@@ -212,4 +212,6 @@
 :root {
   --container-width-md: calc(var(--spacing) * 192);
   --container-width-lg: calc(var(--spacing) * 256);
+
+  font-weight: 320;
 }
