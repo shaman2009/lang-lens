@@ -74,7 +74,7 @@ export function MessageItem({
           ))
         )}
         {hasToolCalls(message) && message.tool_calls && (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col">
             {message.tool_calls.map((tool_call) => (
               <ToolCallView
                 key={tool_call.id}
