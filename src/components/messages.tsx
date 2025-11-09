@@ -22,7 +22,7 @@ export function Messages({
     <Conversation
       className={cn("flex h-full w-full justify-center", className)}
     >
-      <ConversationContent className="w-full max-w-(--container-width-md) place-self-center pb-40">
+      <ConversationContent className="w-full max-w-(--container-width-md) place-self-center pt-20 pb-40">
         {messages.map((message) => (
           <MessageItem key={message.id} message={message} />
         ))}

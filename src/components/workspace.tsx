@@ -42,7 +42,7 @@ export function WorkspaceHeader({
   return (
     <header
       className={cn(
-        "sticky top-0 z-20 flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-out group-has-data-[collapsible=icon]/sidebar-wrapper:h-12",
+        "absolute top-0 right-0 left-0 z-20 flex h-16 shrink-0 items-center gap-2 border-b backdrop-blur-sm transition-[width,height] ease-out group-has-data-[collapsible=icon]/sidebar-wrapper:h-12",
         className,
       )}
       {...props}
@@ -98,7 +98,7 @@ export function WorkspaceContent({
   return (
     <main
       className={cn(
-        "relative flex min-h-0 w-full flex-1 flex-col items-center pt-2",
+        "relative flex min-h-0 w-full flex-1 flex-col items-center",
         className,
       )}
       {...props}

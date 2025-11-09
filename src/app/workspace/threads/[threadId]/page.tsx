@@ -2,8 +2,14 @@
 
 import type { HumanMessage } from "@langchain/core/messages";
 import { useStream } from "@langchain/langgraph-sdk/react";
-import { redirect, useParams, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo } from "react";
+import {
+  redirect,
+  useParams,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { v4 as uuid } from "uuid";
 
 import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
 import { InputBox } from "@/components/input-box";
@@ -19,21 +25,86 @@ import { type MessageThreadValues } from "@/lib/thread";
 import { cn } from "@/lib/utils";
 
 export default function ThreadPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const assistantId = searchParams.get("assistantId");
+  const [threadId, setThreadId] = useState<string | null>(null);
+  const { threadId: threadIdFromPath } = useParams<{ threadId: string }>();
+  const isNew = useMemo(() => threadIdFromPath === "new", [threadIdFromPath]);
+  useEffect(() => {
+    if (threadIdFromPath !== "new") {
+      setThreadId(threadIdFromPath);
+    } else {
+      setThreadId(uuid());
+    }
+  }, [threadIdFromPath]);
+  const { messages, isLoading, isThreadLoading, submit } =
+    useStream<MessageThreadValues>({
+      client: apiClient,
+      assistantId: assistantId!,
+      threadId: !isNew ? threadId : undefined,
+      reconnectOnMount: true,
+    });
+
+  useAssistantMemory(assistantId, isNew);
+
+  const handleSubmit = useCallback(
+    async (message: PromptInputMessage) => {
+      if (isNew) {
+        router.replace(
+          `/workspace/threads/${threadId}?assistantId=${assistantId}`,
+        );
+      }
+      await submit(
+        {
+          messages: [
+            {
+              type: "human",
+              content: [
+                {
+                  type: "text",
+                  text: message.text!,
+                },
+              ],
+            } as HumanMessage,
+          ],
+        },
+        {
+          threadId: isNew ? threadId! : undefined,
+        },
+      );
+    },
+    [assistantId, isNew, router, submit, threadId],
+  );
+
+  return (
+    <WorkspaceContainer>
+      <WorkspaceHeader>{isNew ? `New` : threadIdFromPath}</WorkspaceHeader>
+      <WorkspaceContent>
+        <div className="flex h-full w-full">
+          <Messages messages={messages} />
+        </div>
+      </WorkspaceContent>
+      <WorkspaceFooter>
+        <InputBox
+          className={cn(
+            "max-w-(--container-width-md)",
+            isNew && "-translate-y-[40vh]",
+          )}
+          assistantId={assistantId}
+          isNewThread={isNew}
+          onSubmit={handleSubmit}
+        />
+      </WorkspaceFooter>
+    </WorkspaceContainer>
+  );
+}
+
+function useAssistantMemory(assistantId: string | null, isNewThread: boolean) {
   const { data: assistants } = useAssistants();
   const DEFAULT_ASSISTANT_ID = useMemo(() => {
     return assistants && assistants.length > 0 ? assistants[0]!.graph_id : null;
   }, [assistants]);
-
-  const { threadId } = useParams<{ threadId: string }>();
-  const isNewThread = useMemo(() => threadId === "new", [threadId]);
-  const { messages, isLoading, isThreadLoading, submit } =
-    useStream<MessageThreadValues>({
-      client: apiClient,
-      threadId: isNewThread ? undefined : threadId,
-      assistantId: assistantId!,
-    });
   useEffect(() => {
     if (
       typeof localStorage === "object" &&
@@ -67,45 +138,4 @@ export default function ThreadPage() {
       localStorage.setItem("lang-lens/default_assistant_id", assistantId);
     }
   }, [assistantId, isNewThread]);
-
-  const handleSubmit = useCallback(
-    async (message: PromptInputMessage) => {
-      await submit({
-        messages: [
-          {
-            type: "human",
-            content: [
-              {
-                type: "text",
-                text: message.text!,
-              },
-            ],
-          } as HumanMessage,
-        ],
-      });
-    },
-    [submit],
-  );
-
-  return (
-    <WorkspaceContainer>
-      <WorkspaceHeader>{isNewThread ? `New` : threadId}</WorkspaceHeader>
-      <WorkspaceContent>
-        <div className="flex h-full w-full">
-          <Messages messages={messages} />
-        </div>
-      </WorkspaceContent>
-      <WorkspaceFooter>
-        <InputBox
-          className={cn(
-            "max-w-(--container-width-md)",
-            isNewThread && "-translate-y-[40vh]",
-          )}
-          assistantId={assistantId}
-          isNewThread={isNewThread}
-          onSubmit={handleSubmit}
-        />
-      </WorkspaceFooter>
-    </WorkspaceContainer>
-  );
 }
