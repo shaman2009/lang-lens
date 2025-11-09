@@ -3,12 +3,7 @@
 import type { HumanMessage } from "@langchain/core/messages";
 import { useStream } from "@langchain/langgraph-sdk/react";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  redirect,
-  useParams,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { v4 as uuid } from "uuid";
 
@@ -40,13 +35,12 @@ export default function ThreadPage() {
       setThreadId(uuid());
     }
   }, [threadIdFromPath]);
-  const { messages, isLoading, isThreadLoading, submit } =
-    useStream<MessageThreadValues>({
-      client: apiClient,
-      assistantId: assistantId!,
-      threadId: !isNew ? threadId : undefined,
-      reconnectOnMount: true,
-    });
+  const { messages, submit } = useStream<MessageThreadValues>({
+    client: apiClient,
+    assistantId: assistantId!,
+    threadId: !isNew ? threadId : undefined,
+    reconnectOnMount: true,
+  });
 
   useAssistantMemory(assistantId, isNew);
 
@@ -130,6 +124,7 @@ export default function ThreadPage() {
 }
 
 function useAssistantMemory(assistantId: string | null, isNewThread: boolean) {
+  const router = useRouter();
   const { data: assistants } = useAssistants();
   const DEFAULT_ASSISTANT_ID = useMemo(() => {
     return assistants && assistants.length > 0 ? assistants[0]!.graph_id : null;
@@ -152,15 +147,19 @@ function useAssistantMemory(assistantId: string | null, isNewThread: boolean) {
               a.assistant_id === lastAssistantId,
           );
           if (assistant) {
-            redirect(`/workspace/threads/new?assistantId=${lastAssistantId}`);
+            router.replace(
+              `/workspace/threads/new?assistantId=${lastAssistantId}`,
+            );
           }
         }
-        redirect(`/workspace/threads/new?assistantId=${DEFAULT_ASSISTANT_ID}`);
+        router.replace(
+          `/workspace/threads/new?assistantId=${DEFAULT_ASSISTANT_ID}`,
+        );
       } else {
-        redirect("/workspace/assistants");
+        router.replace("/workspace/assistants");
       }
     }
-  }, [DEFAULT_ASSISTANT_ID, assistantId, assistants, isNewThread]);
+  }, [DEFAULT_ASSISTANT_ID, assistantId, assistants, isNewThread, router]);
 
   useEffect(() => {
     if (assistantId && isNewThread) {
