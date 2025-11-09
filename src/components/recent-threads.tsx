@@ -39,11 +39,14 @@ export function RecentThreads() {
       {threads.map((thread) => {
         const isActive = pathOfThread(thread, false) === pathname;
         return (
-          <SidebarMenuItem key={thread.thread_id}>
+          <SidebarMenuItem
+            key={thread.thread_id}
+            className="group/side-menu-item"
+          >
             <SidebarMenuButton isActive={isActive} asChild>
-              <div className="flex">
+              <div>
                 <Link
-                  className="text-muted-foreground grow whitespace-nowrap"
+                  className="text-muted-foreground whitespace-nowrap group-hover/side-menu-item:overflow-hidden"
                   href={pathOfThread(thread)}
                 >
                   {titleOfThread(thread)}
