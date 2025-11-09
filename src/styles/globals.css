@@ -196,6 +196,7 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    line-height: 1.65rem;
   }
   body {
     @apply bg-background text-foreground;
@@ -211,9 +212,4 @@
 :root {
   --container-width-md: calc(var(--spacing) * 192);
   --container-width-lg: calc(var(--spacing) * 256);
-
-  font-size: 17px;
-}
-body {
-  font-size: 1.0625rem;
 }
