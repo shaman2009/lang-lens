@@ -42,7 +42,7 @@ export function InputBox({
         "rounded-3xl drop-shadow-2xl backdrop-blur-xs transition-all duration-300 ease-out *:data-[slot='input-group']:rounded-3xl",
         isNew
           ? "max-w-(--container-width-sm)"
-          : "focus-within:bg-background/85 h-12 max-w-(--container-width-xs) overflow-hidden focus-within:h-fit focus-within:max-w-(--container-width-md)",
+          : "focus-within:bg-background/85 h-12 max-w-(--container-width-xs) translate-y-4 overflow-hidden focus-within:h-fit focus-within:max-w-(--container-width-md) focus-within:translate-y-0",
         className,
       )}
       globalDrop
