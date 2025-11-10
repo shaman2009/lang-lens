@@ -35,11 +35,12 @@ export default function ThreadPage() {
       setThreadId(uuid());
     }
   }, [threadIdFromPath]);
-  const { messages, isLoading, submit, stop } = useStream<MessageThreadValues>({
+  const thread = useStream<MessageThreadValues>({
     client: apiClient,
     assistantId: assistantId!,
     threadId: !isNew ? threadId : undefined,
     reconnectOnMount: true,
+    fetchStateHistory: true,
   });
 
   useAssistantMemory(assistantId, isNew);
@@ -79,7 +80,7 @@ export default function ThreadPage() {
           `/workspace/threads/${threadId}?assistantId=${assistantId}&autoFocus=true`,
         );
       }
-      await submit(
+      await thread.submit(
         {
           messages: [
             {
@@ -99,26 +100,26 @@ export default function ThreadPage() {
       );
       void queryClient.invalidateQueries({ queryKey: ["threads", "search"] });
     },
-    [assistantId, isNew, queryClient, router, submit, threadId],
+    [assistantId, isNew, queryClient, router, thread, threadId],
   );
 
   const handleStop = useCallback(() => {
-    void stop();
-  }, [stop]);
+    void thread.stop();
+  }, [thread]);
 
   return (
     <WorkspaceContainer>
       <WorkspaceHeader>{isNew ? `New` : threadIdFromPath}</WorkspaceHeader>
       <WorkspaceContent>
         <div className="flex h-full w-full">
-          <Messages messages={messages} />
+          <Messages thread={thread} />
         </div>
       </WorkspaceContent>
       <WorkspaceFooter>
         <InputBox
           className={cn(isNew && "-translate-y-[40vh]")}
           assistantId={assistantId}
-          status={isLoading ? "streaming" : "ready"}
+          status={thread.isLoading ? "streaming" : "ready"}
           isNew={isNew}
           autoFocus={isNew || searchParams.get("autoFocus") === "true"}
           onSubmit={handleSubmit}

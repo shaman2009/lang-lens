@@ -1,7 +1,10 @@
 import type { MessageContentComplex } from "@langchain/core/messages";
 import type { AIMessage, Message } from "@langchain/langgraph-sdk";
+import type { UseStream } from "@langchain/langgraph-sdk/react";
+import type { BagTemplate } from "node_modules/@langchain/langgraph-sdk/dist/react/types";
 
 import { rehypeSplitWordsIntoSpans } from "@/lib/rehype";
+import type { MessageThreadValues } from "@/lib/thread";
 import { cn } from "@/lib/utils";
 
 import {
@@ -19,24 +22,24 @@ import { ToolCallView } from "./tool-call-view";
 
 export function Messages({
   className,
-  messages,
+  thread,
 }: {
   className?: string;
-  messages: Array<Message>;
+  thread: UseStream<MessageThreadValues, BagTemplate>;
 }) {
   return (
     <Conversation
       className={cn("flex h-full w-full justify-center", className)}
     >
       <ConversationContent className="w-full max-w-(--container-width-md) place-self-center pt-12 pb-40">
-        {messages.map(
+        {thread.messages.map(
           (message) =>
             shouldRender(message) && (
               <MessageItem
                 key={message.id}
                 className={cn(message.type === "human" && "mb-8")}
                 message={message}
-                messages={messages}
+                thread={thread}
               />
             ),
         )}
@@ -65,17 +68,18 @@ export function hasToolCalls(message: Message): message is AIMessage {
 export function MessageItem({
   className,
   message,
-  messages,
+  thread,
 }: {
   className?: string;
   message: Message;
-  messages: Message[];
+  thread: UseStream<MessageThreadValues, BagTemplate>;
 }) {
   return (
     <ConversationMessage
       className={cn(
         message.type === "ai" &&
           "hover:bg-card/40 rounded-lg px-4 py-2 transition-colors ease-out",
+        message.type === "human" && "mb-8",
         className,
       )}
       from={message.type === "human" ? "user" : "assistant"}
@@ -94,7 +98,7 @@ export function MessageItem({
               <ToolCallView
                 key={tool_call.id}
                 toolCall={tool_call}
-                messages={messages}
+                messages={thread.messages}
               />
             ))}
           </div>
