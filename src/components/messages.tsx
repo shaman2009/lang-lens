@@ -1,7 +1,13 @@
 import type { MessageContentComplex } from "@langchain/core/messages";
 import type { AIMessage, Message } from "@langchain/langgraph-sdk";
 import type { UseStream } from "@langchain/langgraph-sdk/react";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Copy,
+  Edit,
+  RefreshCcw,
+} from "lucide-react";
 import type { BagTemplate } from "node_modules/@langchain/langgraph-sdk/dist/react/types";
 import { useMemo } from "react";
 
@@ -36,7 +42,7 @@ export function Messages({
     <Conversation
       className={cn("flex h-full w-full justify-center", className)}
     >
-      <ConversationContent className="w-full max-w-(--container-width-md) place-self-center pt-4 pb-40">
+      <ConversationContent className="w-full max-w-(--container-width-md) place-self-center pt-4 pb-48">
         {thread.messages.map(
           (message) =>
             shouldRender(message) && (
@@ -68,6 +74,21 @@ export function MessageItem({
     () => thread.getMessagesMetadata(message),
     [message, thread],
   );
+  const showToolbar = useMemo(() => {
+    if (message.type === "human") {
+      return true;
+    }
+    if (thread.isLoading) {
+      return false;
+    }
+    if (message.type === "ai") {
+      const messageIndex = thread.messages.indexOf(message);
+      if (messageIndex === thread.messages.length - 1) {
+        return true;
+      }
+      return thread.messages[messageIndex + 1]?.type === "human";
+    }
+  }, [message, thread]);
   const from = message.type === "human" ? "user" : "assistant";
   const branch = metadata?.branch ?? "main";
   const branches = metadata?.branchOptions ?? ["main"];
@@ -86,15 +107,32 @@ export function MessageItem({
         <ConversationMessageContent className="flex flex-col">
           <MessageContentWithToolCalls message={message} thread={thread} />
         </ConversationMessageContent>
-        <MessageToolbar
-          className={cn(
-            from === "user" && "justify-end",
-            from === "user" ? "-bottom-4" : "-bottom-10",
-            "absolute right-0 left-0 opacity-0 transition-opacity delay-500 duration-250 group-hover/conversation-message:opacity-100",
-          )}
-        >
-          <BranchSwitch value={branch} options={branches} thread={thread} />
-        </MessageToolbar>
+        {showToolbar && (
+          <MessageToolbar
+            className={cn(
+              from === "user" && "justify-end",
+              from === "user" ? "-bottom-6" : "-bottom-10",
+              "absolute right-0 left-0 opacity-0 transition-opacity delay-25 duration-300 group-hover/conversation-message:opacity-100",
+            )}
+          >
+            <BranchSwitch value={branch} options={branches} thread={thread} />
+            <div className="flex gap-1">
+              <Button size="icon-sm" type="button" variant="ghost">
+                <Copy size={12} />
+              </Button>
+              {from === "user" && (
+                <Button size="icon-sm" type="button" variant="ghost">
+                  <Edit size={12} />
+                </Button>
+              )}
+              {from === "assistant" && (
+                <Button size="icon-sm" type="button" variant="ghost">
+                  <RefreshCcw size={12} />
+                </Button>
+              )}
+            </div>
+          </MessageToolbar>
+        )}
       </div>
     </ConversationMessage>
   );
@@ -219,7 +257,7 @@ function BranchSwitch({
         variant="ghost"
         onClick={handlePrevious}
       >
-        <ChevronLeftIcon size={14} />
+        <ChevronLeftIcon size={12} />
       </Button>
       <ButtonGroupText
         className={cn(
@@ -229,7 +267,7 @@ function BranchSwitch({
         {options.indexOf(value) + 1} of {totalBranches}
       </ButtonGroupText>
       <Button size="icon-sm" type="button" variant="ghost" onClick={handleNext}>
-        <ChevronRightIcon size={14} />
+        <ChevronRightIcon size={12} />
       </Button>
     </ButtonGroup>
   );

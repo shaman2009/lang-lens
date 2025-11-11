@@ -434,10 +434,7 @@ export const MessageToolbar = ({
   children,
   ...props
 }: MessageToolbarProps) => (
-  <div
-    className={cn("flex w-full items-center justify-between gap-4", className)}
-    {...props}
-  >
+  <div className={cn("flex w-full items-center gap-4", className)} {...props}>
     {children}
   </div>
 );
