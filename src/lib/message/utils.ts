@@ -8,6 +8,22 @@ import type { BagTemplate } from "node_modules/@langchain/langgraph-sdk/dist/rea
 
 import type { MessageThreadValues } from "../thread";
 
+export function findPreviousHumanMessageIndex(
+  message: AIMessage,
+  thread: UseStream<MessageThreadValues, BagTemplate>,
+): number {
+  const messageIndex = thread.values.messages.indexOf(message as BaseMessage);
+  let previousHumanMessageIndex = -1;
+  for (let i = messageIndex - 1; i >= 0; i--) {
+    const msg = thread.values.messages[i]!;
+    if (msg.type === "human") {
+      previousHumanMessageIndex = i;
+      break;
+    }
+  }
+  return previousHumanMessageIndex;
+}
+
 export function extractTextFromMessageContent(
   content: MessageContentComplex | string,
 ): string {
@@ -30,14 +46,10 @@ export function extractAIMessageContent(
   thread: UseStream<MessageThreadValues, BagTemplate>,
 ): string {
   const messageIndex = thread.values.messages.indexOf(message as BaseMessage);
-  let previousHumanMessageIndex = -1;
-  for (let i = messageIndex - 1; i >= 0; i--) {
-    const msg = thread.values.messages[i]!;
-    if (msg.type === "human") {
-      previousHumanMessageIndex = i;
-      break;
-    }
-  }
+  const previousHumanMessageIndex = findPreviousHumanMessageIndex(
+    message,
+    thread,
+  );
   if (previousHumanMessageIndex === -1) {
     return extractTextFromMessageContent(message.content);
   }

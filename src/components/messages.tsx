@@ -20,6 +20,7 @@ import { useCallback, useMemo, useState } from "react";
 import {
   extractAIMessageContent,
   extractTextFromMessageContent,
+  findPreviousHumanMessageIndex,
 } from "@/lib/message";
 import { rehypeSplitWordsIntoSpans } from "@/lib/rehype";
 import type { MessageThreadValues } from "@/lib/thread";
@@ -127,7 +128,17 @@ export function MessageItem({
     );
   }, [editingValue, metadata, thread]);
   const handleRegenerate = useCallback(() => {
-    const parentCheckpoint = metadata?.firstSeenState?.parent_checkpoint;
+    const previousHumanMessageIndex = findPreviousHumanMessageIndex(
+      message as AIMessage,
+      thread,
+    );
+    if (previousHumanMessageIndex === -1) {
+      return;
+    }
+    const previousHumanMessage = thread.messages[previousHumanMessageIndex]!;
+    const parentCheckpoint =
+      thread.getMessagesMetadata(previousHumanMessage)?.firstSeenState
+        ?.checkpoint;
     if (!parentCheckpoint) {
       return;
     }
@@ -137,7 +148,7 @@ export function MessageItem({
       streamSubgraphs: true,
       streamResumable: true,
     });
-  }, [metadata, thread]);
+  }, [message, thread]);
   const [copied, setCopied] = useState(false);
   const handleCopy = useCallback(async () => {
     let messageContent = "";
