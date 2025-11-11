@@ -58,7 +58,7 @@ export default function ThreadPage() {
               sortOrder: "desc",
             },
           ],
-          (oldData) => {
+          (oldData: Array<unknown>) => {
             return [
               {
                 thread_id: threadId,
@@ -72,7 +72,7 @@ export default function ThreadPage() {
                   ],
                 },
               },
-              ...(oldData as Array<unknown>),
+              ...oldData,
             ];
           },
         );
@@ -119,7 +119,7 @@ export default function ThreadPage() {
       </WorkspaceContent>
       <WorkspaceFooter>
         <InputBox
-          className={cn(isNew && "-translate-y-[40vh]")}
+          className={cn(isNew && "-translate-y-[33vh]")}
           assistantId={assistantId}
           status={thread.isLoading ? "streaming" : "ready"}
           isNew={isNew}
