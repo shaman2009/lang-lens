@@ -12,14 +12,15 @@ export function extractTextFromMessageContent(
   content: MessageContentComplex | string,
 ): string {
   if (typeof content === "string") {
-    return content;
+    return content.trim();
   } else if (Array.isArray(content)) {
     return content
       .map((part) => extractTextFromMessageContent(part))
+      .filter((text) => text.trim())
       .join("\n\n")
       .trim();
   } else if (typeof content === "object" && content) {
-    return content.type === "text" ? content.text : "";
+    return content.type === "text" ? content.text.trim() : "";
   }
   return "";
 }
@@ -42,7 +43,10 @@ export function extractAIMessageContent(
   for (let i = previousHumanMessageIndex + 1; i <= messageIndex; i++) {
     const msg = thread.values.messages[i]!;
     if (msg.type === "ai") {
-      content += extractTextFromMessageContent(msg.content) + "\n\n";
+      const extracted = extractTextFromMessageContent(msg.content);
+      if (extracted.trim()) {
+        content += extracted + "\n\n";
+      }
     }
   }
   return content.trim();
