@@ -84,6 +84,14 @@
       opacity: 1;
     }
   }
+
+  --animate-bouncing: bouncing 0.5s infinite alternate;
+  @keyframes bouncing {
+    to {
+      opacity: 0.1;
+      transform: translateY(-8px);
+    }
+  }
 }
 
 @theme inline {
