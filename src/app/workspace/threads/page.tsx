@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 
-import { ThreadTable } from "@/components/thread-table";
+import { ThreadList } from "@/components/thread-list";
 import {
   WorkspaceContainer,
   WorkspaceContent,
@@ -15,9 +15,7 @@ export default function ThreadsPage() {
     <WorkspaceContainer>
       <WorkspaceHeader>{threadId}</WorkspaceHeader>
       <WorkspaceContent>
-        <div className="flex size-full justify-center pt-8">
-          <ThreadTable className="w-h max-w-(--container-width-lg)" />
-        </div>
+        <ThreadList className="w-full max-w-(--container-width-lg)" />
       </WorkspaceContent>
     </WorkspaceContainer>
   );
