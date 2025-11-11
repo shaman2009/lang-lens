@@ -179,7 +179,7 @@ export function MessageItem({
         "relative",
         "group/conversation-message",
         message.type === "ai" &&
-          "hover:bg-card/40 rounded-lg px-4 py-2 transition-colors ease-out",
+          "rounded-lg px-4 py-2 transition-colors ease-out",
         className,
       )}
       from={from}
