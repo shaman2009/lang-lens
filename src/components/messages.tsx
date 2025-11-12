@@ -106,28 +106,27 @@ export function MessageItem({
       return;
     }
     setEditingMessageId(null);
-    // void thread.submit(
-    //   {
-    //     messages: [
-    //       {
-    //         type: "human",
-    //         content: [
-    //           {
-    //             type: "text",
-    //             text: editingValue,
-    //           },
-    //         ],
-    //       } as HumanMessage,
-    //     ],
-    //   },
-    //   {
-    //     checkpoint: parentCheckpoint,
-    //     streamMode: ["values"],
-    //     streamSubgraphs: true,
-    //     streamResumable: true,
-    //   },
-    // );
-    console.info(parentCheckpoint);
+    void thread.submit(
+      {
+        messages: [
+          {
+            type: "human",
+            content: [
+              {
+                type: "text",
+                text: editingValue,
+              },
+            ],
+          } as HumanMessage,
+        ],
+      },
+      {
+        checkpoint: parentCheckpoint,
+        streamMode: ["values"],
+        streamSubgraphs: true,
+        streamResumable: true,
+      },
+    );
   }, [editingValue, metadata, thread]);
   const handleRegenerate = useCallback(() => {
     const previousHumanMessageIndex = findPreviousHumanMessageIndex(
@@ -205,7 +204,7 @@ export function MessageItem({
               onSubmit={handleSubmitEditing}
             >
               <Textarea
-                className="min-h-24 w-120 resize-none"
+                className="min-h-24 w-92 resize-none"
                 placeholder="Edit message"
                 autoFocus
                 value={editingValue}

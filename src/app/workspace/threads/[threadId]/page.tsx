@@ -3,6 +3,7 @@
 import type { HumanMessage } from "@langchain/core/messages";
 import { useStream } from "@langchain/langgraph-sdk/react";
 import { useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { v4 as uuid } from "uuid";
@@ -10,6 +11,11 @@ import { v4 as uuid } from "uuid";
 import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
 import { InputBox } from "@/components/input-box";
 import { Messages } from "@/components/messages";
+import {
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import {
   WorkspaceContainer,
   WorkspaceContent,
@@ -111,7 +117,17 @@ export default function ThreadPage() {
 
   return (
     <WorkspaceContainer>
-      <WorkspaceHeader>{isNew ? `New` : threadIdFromPath}</WorkspaceHeader>
+      <WorkspaceHeader>
+        <BreadcrumbItem className="hidden md:block">
+          <BreadcrumbLink asChild>
+            <Link href={`/workspace/threads?assistantId=${assistantId}`}>
+              {assistantId}
+            </Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem className="hidden md:block">{threadId}</BreadcrumbItem>
+      </WorkspaceHeader>
       <WorkspaceContent>
         <div className="flex h-full w-full">
           <Messages thread={thread} />
@@ -159,13 +175,16 @@ function useAssistantMemory(assistantId: string | null, isNewThread: boolean) {
             router.replace(
               `/workspace/threads/new?assistantId=${lastAssistantId}`,
             );
+            return;
           }
         }
         router.replace(
           `/workspace/threads/new?assistantId=${DEFAULT_ASSISTANT_ID}`,
         );
+        return;
       } else {
         router.replace("/workspace/assistants");
+        return;
       }
     }
   }, [DEFAULT_ASSISTANT_ID, assistantId, assistants, isNewThread, router]);

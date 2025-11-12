@@ -1,32 +1,22 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import { MessageSquare } from "lucide-react";
 import Link from "next/link";
 
-import { useThreads } from "@/lib/api";
+import type { MessageThread } from "@/lib/thread/types";
 import { pathOfThread, titleOfThread } from "@/lib/thread/utils";
 import { cn } from "@/lib/utils";
 
-import { EmptyState } from "./empty-state";
 import { InnerShadow } from "./inner-shadow";
 import { ScrollArea } from "./ui/scroll-area";
 
-export function ThreadList({ className }: { className?: string }) {
-  const { data: threads = [], isLoading } = useThreads({
-    limit: 1000,
-    sortBy: "updated_at",
-    sortOrder: "desc",
-  });
-  if (threads.length === 0 && !isLoading) {
-    return (
-      <EmptyState
-        icon={<MessageSquare className="size-6" />}
-        title="No threads found"
-        description="Start a thread to see threads here"
-      />
-    );
-  }
+export function ThreadList({
+  className,
+  threads,
+}: {
+  className?: string;
+  threads: MessageThread[];
+}) {
   return (
     <div className={cn("h-full w-full", className)}>
       <ScrollArea className="size-full">
@@ -38,10 +28,16 @@ export function ThreadList({ className }: { className?: string }) {
           >
             <div className="hover:bg-card rounded-lg p-4">
               <Link className="flex flex-col gap-1" href={pathOfThread(thread)}>
-                <div className="text-lg">{titleOfThread(thread)}</div>
+                <div className="text-lg">
+                  <span>{titleOfThread(thread)}</span>
+                </div>
                 <div className="text-muted-foreground text-xs">
-                  Last message{" "}
-                  {formatDistanceToNow(new Date(thread.updated_at))}
+                  <span>{thread.metadata.graph_id}</span>
+                  <span className="mx-1 opacity-50">|</span>
+                  <span>
+                    Last message{" "}
+                    {formatDistanceToNow(new Date(thread.updated_at))}
+                  </span>
                 </div>
               </Link>
             </div>
