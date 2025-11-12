@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { cn } from "@/lib/utils";
 
 import {
@@ -20,6 +22,16 @@ export function Todos({
   className?: string;
   todos?: QueueTodo[];
 }) {
+  const completedTodos = useMemo(() => {
+    const count = todos.filter((todo) => todo.status === "completed").length;
+    if (count === 0) {
+      return "";
+    } else if (count === todos.length) {
+      return `, all done`;
+    } else {
+      return `, ${count} completed`;
+    }
+  }, [todos]);
   if (todos.length === 0) {
     return null;
   }
@@ -29,7 +41,7 @@ export function Todos({
         <QueueSectionTrigger>
           <QueueSectionLabel
             count={todos.length}
-            label={`Todo Item${todos.length > 1 ? "s" : ""}`}
+            label={`Todo Item${todos.length > 1 ? "s" : ""}${completedTodos}`}
           />
         </QueueSectionTrigger>
         <QueueSectionContent>
