@@ -18,9 +18,18 @@ export function LoginStatus() {
   const user = {
     name: "Henry Li",
     email: "lixin.henry@bytedance.com",
-    avatar:
-      "//img.alicdn.com/sns_logo/i3/34048946/TB2wks.eeEJL1JjSZFGXXa6OXXa_!!0-mytaobao.jpg",
+    avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent("Henry Li")}`,
   };
+
+  // Get initials from name
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+  };
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -32,7 +41,9 @@ export function LoginStatus() {
             >
               <Avatar className="h-8 w-8 rounded-full">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-full">CN</AvatarFallback>
+                <AvatarFallback className="rounded-full">
+                  {getInitials(user.name)}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
@@ -54,7 +65,7 @@ export function LoginStatus() {
                 <Avatar className="h-8 w-8 rounded-full">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="rounded-full">
-                    {user.name}
+                    {getInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
