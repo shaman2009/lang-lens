@@ -1,8 +1,25 @@
 # LangLens
 
-A modern, beautiful debugging and visualization UI for [LangGraph](https://github.com/langchain-ai/langgraph) applications.
+> A modern, beautiful debugging and visualization UI for [LangGraph](https://github.com/langchain-ai/langgraph) applications.
 
 LangLens provides an intuitive web interface to interact with, monitor, and debug your LangGraph assistants in real-time, with rich message rendering, conversation management, and powerful visualization tools.
+
+## Why LangLens?
+
+Building AI applications with LangGraph is powerful, but debugging and understanding complex agent workflows can be challenging. LangLens bridges this gap by providing:
+
+- **Visual Clarity** - See exactly what your agents are doing in real-time
+- **Debugging Power** - Track tool calls, state changes, and reasoning chains
+- **Production Monitoring** - Monitor live conversations and agent behavior
+- **Developer Experience** - Beautiful UI that makes debugging enjoyable
+
+### Use Cases
+
+- **Development**: Debug and test LangGraph agents during development
+- **QA Testing**: Validate agent behavior across different scenarios
+- **Production Monitoring**: Monitor live agent conversations in production
+- **Team Collaboration**: Share and review agent conversations with your team
+- **Learning**: Understand how LangGraph agents work by visualizing their execution
 
 ## Features
 
@@ -43,12 +60,27 @@ Built with modern web technologies for optimal performance and developer experie
 - **[XYFlow](https://reactflow.dev/)** - Graph visualization
 - **[Framer Motion](https://www.framer.com/motion/)** - Smooth animations
 
+## Quick Start
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+
+# Open http://localhost:3000
+```
+
+That's it! LangLens will connect to your LangGraph server at `http://localhost:2024` by default.
+
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
-- A running LangGraph server (default: `http://localhost:2024`)
+- **Node.js 18+** and **pnpm 10.20.0**
+- A running **LangGraph server** (default: `http://localhost:2024`)
+- At least one LangGraph assistant configured on your server
 
 ### Installation
 
@@ -133,14 +165,38 @@ lang-lens/
 
 ## Development
 
-### Code Quality
+### Available Commands
 
-This project uses:
-- **ESLint** for code linting
-- **Prettier** for code formatting
-- **TypeScript** for type checking
+```bash
+# Development
+pnpm dev --turbo          # Start dev server with Turbo mode (recommended)
+pnpm dev                  # Start dev server
 
-Run `npm run check` before committing to ensure code quality.
+# Code Quality
+pnpm check                # Run all checks (lint + typecheck)
+pnpm typecheck            # TypeScript type checking only
+pnpm lint                 # Run ESLint
+pnpm lint:fix             # Auto-fix ESLint issues
+
+# Formatting
+pnpm format:check         # Check code formatting
+pnpm format:write         # Auto-format code with Prettier
+
+# Build & Deploy
+pnpm build                # Create production build
+pnpm start                # Start production server (after build)
+pnpm preview              # Build and start production server
+```
+
+### Code Quality Standards
+
+This project maintains high code quality with:
+- **ESLint** - Linting with Next.js and TypeScript rules
+- **Prettier** - Consistent code formatting with Tailwind plugin
+- **TypeScript** - Strict mode type checking
+- **Git Hooks** - Pre-commit checks (optional)
+
+**Before committing:** Run `pnpm check` to ensure all quality checks pass.
 
 ## Usage
 
@@ -162,15 +218,53 @@ Run `npm run check` before committing to ensure code quality.
 
 Click the theme toggle in the header to switch between dark and light modes.
 
+## Troubleshooting
+
+### Common Issues
+
+**No assistants showing up**
+- Ensure your LangGraph server is running on `http://localhost:2024`
+- Verify your server has at least one assistant configured
+- Check the browser console for connection errors
+
+**Connection errors**
+- Verify the API URL in `src/lib/api/client.ts` matches your server
+- Check that your LangGraph server is accessible
+- Ensure there are no CORS issues
+
+**Type errors during build**
+- Run `pnpm typecheck` to see all type errors
+- Ensure you're using Node.js 18+ and pnpm 10.20.0
+- Try deleting `node_modules` and `.next`, then reinstall
+
+**Development server not starting**
+- Check if port 3000 is already in use
+- Try `pnpm dev --port 3001` to use a different port
+- Clear Next.js cache: `rm -rf .next`
+
+For more help, see [ARCHITECTURE.md](./ARCHITECTURE.md) or open an issue.
+
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines.
+
+Quick contribution workflow:
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+3. Make your changes and ensure tests pass (`pnpm check`)
+4. Commit your changes (`git commit -m 'Add some amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
+
+### Development Setup
+
+```bash
+git clone https://github.com/yourusername/lang-lens.git
+cd lang-lens
+pnpm install
+pnpm dev
+```
 
 ## License
 
