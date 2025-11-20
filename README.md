@@ -86,7 +86,7 @@ That's it! LangLens will connect to your LangGraph server at `http://localhost:2
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/lang-lens.git
+git clone https://github.com/shaman2009/lang-lens.git
 cd lang-lens
 ```
 
@@ -148,7 +148,7 @@ lang-lens/
 │   │   │   └── assistants/     # Assistant selection
 │   │   └── layout.tsx          # Root layout
 │   ├── components/
-│   │   ├── ai-elements/        # AI-specific UI (37 components)
+│   │   ├── ai-elements/        # AI-specific UI (30 components)
 │   │   ├── ui/                 # Shadcn/Radix components
 │   │   ├── workspace-sidebar.tsx
 │   │   ├── messages.tsx
@@ -242,7 +242,17 @@ Click the theme toggle in the header to switch between dark and light modes.
 - Try `pnpm dev --port 3001` to use a different port
 - Clear Next.js cache: `rm -rf .next`
 
-For more help, see [ARCHITECTURE.md](./ARCHITECTURE.md) or open an issue.
+For more help, see our detailed documentation in the [Documentation](#documentation) section below.
+
+## Documentation
+
+This project includes comprehensive documentation to help you understand and work with LangLens:
+
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Deep dive into the architecture, design patterns, and technical decisions
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Complete guide for deploying LangLens to production environments
+- **[FRAMEWORKS.md](./FRAMEWORKS.md)** - Detailed documentation of all frameworks and libraries used
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Guidelines for contributing to the project
+- **[CLAUDE.md](./CLAUDE.md)** - Instructions for AI assistants (Claude Code) working with this codebase
 
 ## Contributing
 
@@ -260,15 +270,11 @@ Quick contribution workflow:
 ### Development Setup
 
 ```bash
-git clone https://github.com/yourusername/lang-lens.git
+git clone https://github.com/shaman2009/lang-lens.git
 cd lang-lens
 pnpm install
 pnpm dev
 ```
-
-## License
-
-[MIT](LICENSE)
 
 ## Acknowledgments
 
