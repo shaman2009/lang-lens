@@ -15,11 +15,12 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
 
 export function LoginStatus() {
+  // TODO: Replace with actual user data from authentication context
+  // In production, this should come from your auth provider (e.g., Clerk, Auth0, NextAuth)
   const user = {
-    name: "Henry Li",
-    email: "lixin.henry@bytedance.com",
-    avatar:
-      "//img.alicdn.com/sns_logo/i3/34048946/TB2wks.eeEJL1JjSZFGXXa6OXXa_!!0-mytaobao.jpg",
+    name: "Guest User",
+    email: "user@example.com",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=guest",
   };
   return (
     <SidebarMenu>
