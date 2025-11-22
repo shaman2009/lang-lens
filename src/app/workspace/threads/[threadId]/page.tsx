@@ -26,6 +26,9 @@ import {
   WorkspaceHeader,
 } from "@/components/workspace";
 import { apiClient, useAssistants } from "@/lib/api";
+import { DEFAULT_THREADS_PARAMS } from "@/lib/constants/query";
+import { storage, STORAGE_KEYS } from "@/lib/constants/storage";
+import { UI_TRANSFORMS } from "@/lib/constants/ui";
 import { extractTodosFromMessages } from "@/lib/services/todo-extractor";
 import { type MessageThreadValues } from "@/lib/thread";
 import { cn } from "@/lib/utils";
@@ -35,16 +38,14 @@ export default function ThreadPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const assistantId = searchParams.get("assistantId");
-  const [threadId, setThreadId] = useState<string | null>(null);
   const { threadId: threadIdFromPath } = useParams<{ threadId: string }>();
+
+  // Derive threadId from URL params - no need for separate state
   const isNew = useMemo(() => threadIdFromPath === "new", [threadIdFromPath]);
-  useEffect(() => {
-    if (threadIdFromPath !== "new") {
-      setThreadId(threadIdFromPath);
-    } else {
-      setThreadId(uuid());
-    }
-  }, [threadIdFromPath]);
+  const threadId = useMemo(
+    () => (threadIdFromPath !== "new" ? threadIdFromPath : uuid()),
+    [threadIdFromPath],
+  );
   const thread = useStream<MessageThreadValues>({
     client: apiClient,
     assistantId: assistantId!,
@@ -53,11 +54,11 @@ export default function ThreadPage() {
     fetchStateHistory: true,
   });
 
-  const [todos, setTodos] = useState<QueueTodo[]>([]);
-  useEffect(() => {
-    const extractedTodos = extractTodosFromMessages(thread.messages);
-    setTodos(extractedTodos);
-  }, [thread.messages]);
+  // Extract todos from thread messages using useMemo to avoid infinite loops
+  const todos = useMemo(
+    () => extractTodosFromMessages(thread.messages),
+    [thread.messages],
+  );
 
   useAssistantMemory(assistantId, isNew);
 
@@ -65,15 +66,7 @@ export default function ThreadPage() {
     async (message: PromptInputMessage) => {
       if (isNew) {
         queryClient.setQueryData(
-          [
-            "threads",
-            "search",
-            {
-              limit: 50,
-              sortBy: "updated_at",
-              sortOrder: "desc",
-            },
-          ],
+          ["threads", "search", DEFAULT_THREADS_PARAMS],
           (oldData: Array<unknown>) => {
             return [
               {
@@ -149,7 +142,7 @@ export default function ThreadPage() {
       </WorkspaceContent>
       <WorkspaceFooter>
         <InputBox
-          className={cn(isNew && "-translate-y-[33vh]")}
+          className={cn(isNew && `translate-y-[${UI_TRANSFORMS.INPUT_TRANSLATE_Y}]`)}
           assistantId={assistantId}
           status={thread.isLoading ? "streaming" : "ready"}
           isNew={isNew}
@@ -165,20 +158,20 @@ export default function ThreadPage() {
 function useAssistantMemory(assistantId: string | null, isNewThread: boolean) {
   const router = useRouter();
   const { data: assistants } = useAssistants();
+
+  // Safely get default assistant ID with optional chaining
   const DEFAULT_ASSISTANT_ID = useMemo(() => {
-    return assistants && assistants.length > 0 ? assistants[0]!.graph_id : null;
+    return assistants?.[0]?.graph_id ?? null;
   }, [assistants]);
+
   useEffect(() => {
-    if (
-      typeof localStorage === "object" &&
-      assistants &&
-      isNewThread &&
-      !assistantId
-    ) {
-      if (assistants.length > 0) {
-        const lastAssistantId = localStorage.getItem(
-          "lang-lens/default_assistant_id",
-        );
+    if (!assistants || !isNewThread || assistantId) {
+      return;
+    }
+
+    if (assistants.length > 0) {
+      // Use safe storage wrapper instead of direct localStorage
+      const lastAssistantId = storage.getItem(STORAGE_KEYS.DEFAULT_ASSISTANT_ID);
         if (lastAssistantId) {
           const assistant = assistants.find(
             (a) =>
@@ -205,7 +198,8 @@ function useAssistantMemory(assistantId: string | null, isNewThread: boolean) {
 
   useEffect(() => {
     if (assistantId && isNewThread) {
-      localStorage.setItem("lang-lens/default_assistant_id", assistantId);
+      // Use safe storage wrapper to persist assistant selection
+      storage.setItem(STORAGE_KEYS.DEFAULT_ASSISTANT_ID, assistantId);
     }
   }, [assistantId, isNewThread]);
 }
