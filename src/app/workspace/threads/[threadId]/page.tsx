@@ -1,8 +1,6 @@
 "use client";
 
-import { todo } from "node:test";
-
-import type { AIMessage, HumanMessage } from "@langchain/core/messages";
+import type { HumanMessage } from "@langchain/core/messages";
 import type { ToolMessage } from "@langchain/langgraph-sdk";
 import { useStream } from "@langchain/langgraph-sdk/react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -28,6 +26,7 @@ import {
   WorkspaceHeader,
 } from "@/components/workspace";
 import { apiClient, useAssistants } from "@/lib/api";
+import { extractTodosFromMessages } from "@/lib/services/todo-extractor";
 import { type MessageThreadValues } from "@/lib/thread";
 import { cn } from "@/lib/utils";
 
@@ -56,27 +55,8 @@ export default function ThreadPage() {
 
   const [todos, setTodos] = useState<QueueTodo[]>([]);
   useEffect(() => {
-    const todoCallMessages = thread.messages.filter(
-      (message) =>
-        message.type === "ai" &&
-        message.tool_calls?.some(
-          (toolCall) =>
-            toolCall.name === "write_todos" || toolCall.name === "todo_write",
-        ),
-    );
-    if (todoCallMessages.length === 0) {
-      return undefined;
-    }
-    const lastTodoCallMessage = todoCallMessages[
-      todoCallMessages.length - 1
-    ] as AIMessage;
-    const lastTodoToolCall = lastTodoCallMessage.tool_calls!.find(
-      (toolCall) =>
-        toolCall.name === "write_todos" || toolCall.name === "todo_write",
-    )!;
-    if (lastTodoToolCall.args.todos) {
-      setTodos(lastTodoToolCall.args.todos);
-    }
+    const extractedTodos = extractTodosFromMessages(thread.messages);
+    setTodos(extractedTodos);
   }, [thread.messages]);
 
   useAssistantMemory(assistantId, isNew);

@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import { ErrorBoundary } from "@/components/error-boundary";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { WorkspaceSidebar } from "@/components/workspace-sidebar";
 
@@ -13,11 +14,15 @@ export default function WorkspaceLayout({
   children: React.ReactNode;
 }) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <SidebarProvider>
-        <WorkspaceSidebar />
-        <SidebarInset>{children}</SidebarInset>
-      </SidebarProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <SidebarProvider>
+          <WorkspaceSidebar />
+          <SidebarInset>
+            <ErrorBoundary>{children}</ErrorBoundary>
+          </SidebarInset>
+        </SidebarProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }

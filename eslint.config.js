@@ -41,6 +41,26 @@ export default tseslint.config(
       "@typescript-eslint/no-unsafe-member-access": "off",
       "@typescript-eslint/no-unsafe-argument": "off",
       "@typescript-eslint/no-unsafe-return": "off",
+      // Code quality rules (Clean Code principles)
+      "max-lines": [
+        "warn",
+        {
+          max: 300,
+          skipBlankLines: true,
+          skipComments: true,
+        },
+      ],
+      "max-lines-per-function": [
+        "warn",
+        {
+          max: 50,
+          skipBlankLines: true,
+          skipComments: true,
+        },
+      ],
+      complexity: ["warn", 10],
+      "max-depth": ["warn", 4],
+      "max-params": ["warn", 4],
       "import/order": [
         "error",
         {

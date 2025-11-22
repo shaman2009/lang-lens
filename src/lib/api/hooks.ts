@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { MessageThread, MessageThreadValues } from "../thread";
 
-import { apiClient } from "./client";
+import { apiClient, logApiError } from "./client";
 
 export function useThreads(
   params: Parameters<typeof apiClient.threads.search>[0] = {
@@ -14,9 +14,16 @@ export function useThreads(
   return useQuery<MessageThread[]>({
     queryKey: ["threads", "search", params],
     queryFn: async () => {
-      const response =
-        await apiClient.threads.search<MessageThreadValues>(params);
-      return response as MessageThread[];
+      try {
+        const response =
+          await apiClient.threads.search<MessageThreadValues>(params);
+        return response as MessageThread[];
+      } catch (error) {
+        logApiError("useThreads", error, { params });
+        throw new Error(
+          "Failed to fetch threads. Please check your connection to the LangGraph server.",
+        );
+      }
     },
   });
 }
@@ -25,7 +32,14 @@ export function useDeleteThread() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ threadId }: { threadId: string }) => {
-      await apiClient.threads.delete(threadId);
+      try {
+        await apiClient.threads.delete(threadId);
+      } catch (error) {
+        logApiError("useDeleteThread", error, { threadId });
+        throw new Error(
+          `Failed to delete thread ${threadId}. Please try again.`,
+        );
+      }
     },
     onSuccess(_, { threadId }) {
       queryClient.setQueriesData(
@@ -51,8 +65,15 @@ export function useAssistants(
   return useQuery({
     queryKey: ["assistants", "search", params],
     queryFn: async () => {
-      const response = await apiClient.assistants.search(params);
-      return response;
+      try {
+        const response = await apiClient.assistants.search(params);
+        return response;
+      } catch (error) {
+        logApiError("useAssistants", error, { params });
+        throw new Error(
+          "Failed to fetch assistants. Please ensure the LangGraph server is running.",
+        );
+      }
     },
   });
 }

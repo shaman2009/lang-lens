@@ -12,10 +12,19 @@ import type { LanguageModelUsage } from "ai";
 import { type ComponentProps, createContext, useContext } from "react";
 import { getUsage } from "tokenlens";
 
+/** Maximum percentage value for progress calculations */
 const PERCENT_MAX = 100;
+
+/** Radius for the circular SVG usage indicator (pixels) */
 const ICON_RADIUS = 10;
+
+/** Standard SVG viewBox size for icon rendering */
 const ICON_VIEWBOX = 24;
-const ICON_CENTER = 12;
+
+/** Center point of the SVG viewBox (derived from ICON_VIEWBOX / 2) */
+const ICON_CENTER = ICON_VIEWBOX / 2;
+
+/** Stroke width for SVG circle elements (pixels) */
 const ICON_STROKE_WIDTH = 2;
 
 type ModelId = string;
