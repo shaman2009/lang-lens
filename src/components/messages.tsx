@@ -15,7 +15,7 @@ import {
   Send,
 } from "lucide-react";
 import type { BagTemplate } from "node_modules/@langchain/langgraph-sdk/dist/react/types";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   extractAIMessageContent,
