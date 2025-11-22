@@ -172,27 +172,26 @@ function useAssistantMemory(assistantId: string | null, isNewThread: boolean) {
     if (assistants.length > 0) {
       // Use safe storage wrapper instead of direct localStorage
       const lastAssistantId = storage.getItem(STORAGE_KEYS.DEFAULT_ASSISTANT_ID);
-        if (lastAssistantId) {
-          const assistant = assistants.find(
-            (a) =>
-              a.graph_id === lastAssistantId ||
-              a.assistant_id === lastAssistantId,
-          );
-          if (assistant) {
-            router.replace(
-              `/workspace/threads/new?assistantId=${lastAssistantId}`,
-            );
-            return;
-          }
-        }
-        router.replace(
-          `/workspace/threads/new?assistantId=${DEFAULT_ASSISTANT_ID}`,
+      if (lastAssistantId) {
+        const assistant = assistants.find(
+          (a) =>
+            a.graph_id === lastAssistantId ||
+            a.assistant_id === lastAssistantId,
         );
-        return;
-      } else {
-        router.replace("/workspace/assistants");
-        return;
+        if (assistant) {
+          router.replace(
+            `/workspace/threads/new?assistantId=${lastAssistantId}`,
+          );
+          return;
+        }
       }
+      router.replace(
+        `/workspace/threads/new?assistantId=${DEFAULT_ASSISTANT_ID}`,
+      );
+      return;
+    } else {
+      router.replace("/workspace/assistants");
+      return;
     }
   }, [DEFAULT_ASSISTANT_ID, assistantId, assistants, isNewThread, router]);
 
