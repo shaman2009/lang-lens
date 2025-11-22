@@ -1,16 +1,14 @@
 "use client";
 
 import type { HumanMessage } from "@langchain/core/messages";
-import type { ToolMessage } from "@langchain/langgraph-sdk";
 import { useStream } from "@langchain/langgraph-sdk/react";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { v4 as uuid } from "uuid";
 
 import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
-import type { QueueTodo } from "@/components/ai-elements/queue";
 import { InputBox } from "@/components/input-box";
 import { Messages } from "@/components/messages";
 import { Todos } from "@/components/todos";
@@ -104,7 +102,7 @@ export default function ThreadPage() {
           ],
         },
         {
-          threadId: isNew ? threadId! : undefined,
+          threadId: isNew ? threadId : undefined,
           streamSubgraphs: true,
           streamResumable: true,
         },
@@ -129,7 +127,9 @@ export default function ThreadPage() {
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
-        <BreadcrumbItem className="hidden md:block">{threadId}</BreadcrumbItem>
+        <BreadcrumbItem className="hidden md:block">
+          {isNew ? "New Thread" : threadId}
+        </BreadcrumbItem>
       </WorkspaceHeader>
       <WorkspaceContent>
         <div className="flex h-full w-full flex-col">
