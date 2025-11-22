@@ -53,11 +53,11 @@ export default function ThreadPage() {
     fetchStateHistory: true,
   });
 
-  const [todos, setTodos] = useState<QueueTodo[]>([]);
-  useEffect(() => {
-    const extractedTodos = extractTodosFromMessages(thread.messages);
-    setTodos(extractedTodos);
-  }, [thread.messages]);
+  // Extract todos from thread messages using useMemo to avoid infinite loops
+  const todos = useMemo(
+    () => extractTodosFromMessages(thread.messages),
+    [thread.messages],
+  );
 
   useAssistantMemory(assistantId, isNew);
 
