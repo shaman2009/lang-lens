@@ -152,6 +152,18 @@ export function MessageItem({
     });
   }, [message, thread]);
   const [copied, setCopied] = useState(false);
+
+  // Auto-reset copied state after timeout with proper cleanup
+  useEffect(() => {
+    if (!copied) return;
+
+    const timeoutId = setTimeout(() => {
+      setCopied(false);
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [copied]);
+
   const handleCopy = useCallback(async () => {
     let messageContent = "";
     if (message.type === "human") {
@@ -161,9 +173,6 @@ export function MessageItem({
     }
     await navigator.clipboard.writeText(messageContent);
     setCopied(true);
-    setTimeout(() => {
-      setCopied(false);
-    }, 1000);
   }, [message, thread]);
   const showToolbar = useMemo(() => {
     if (editingMessageId) {
