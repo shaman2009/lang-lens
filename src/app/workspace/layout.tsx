@@ -6,7 +6,15 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { WorkspaceSidebar } from "@/components/workspace-sidebar";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 5000,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export default function WorkspaceLayout({
   children,
@@ -18,9 +26,7 @@ export default function WorkspaceLayout({
       <QueryClientProvider client={queryClient}>
         <SidebarProvider>
           <WorkspaceSidebar />
-          <SidebarInset>
-            <ErrorBoundary>{children}</ErrorBoundary>
-          </SidebarInset>
+          <SidebarInset>{children}</SidebarInset>
         </SidebarProvider>
       </QueryClientProvider>
     </ErrorBoundary>
